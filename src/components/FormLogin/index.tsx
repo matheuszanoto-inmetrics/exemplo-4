@@ -39,11 +39,24 @@ export const FormLogin = ({ onRegister, onCallModal }: FormLoginProps) => {
     register,
     handleSubmit,
     reset,
+    getValues,
     formState: { errors },
   } = useForm({
     mode: 'all',
     resolver: yupResolver(schema),
   });
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const { email, password } = getValues();
+
+    if (!email?.trim() && !password?.trim()) {
+      onCallModal('error', 'Usuário e senha precisam ser preenchidos');
+      return;
+    }
+
+    handleSubmit(handleLogin)(e as React.BaseSyntheticEvent);
+  };
 
   const setSession = (session, user) => {
     if (session) {
@@ -108,7 +121,7 @@ export const FormLogin = ({ onRegister, onCallModal }: FormLoginProps) => {
 
   return (
     <ContainerFormLogin
-      onSubmit={handleSubmit(handleLogin)}
+      onSubmit={handleFormSubmit}
       autoComplete="nope"
     >
       <FieldInput
